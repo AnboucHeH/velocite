@@ -1,5 +1,5 @@
 @startuml diagramme_classes
-' VéloCité - Séance 1 - Diagramme de classes (exigences R1 à R8)
+' VéloCité - Séance 1 - Diagramme de classes (exigences R1 à R8 fair alt D pour affichage)
 hide empty members
 skinparam classAttributeIconSize 0
 
