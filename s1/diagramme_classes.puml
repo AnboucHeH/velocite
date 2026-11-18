@@ -1,0 +1,74 @@
+@startuml diagramme_classes
+' VéloCité - Séance 1 - Diagramme de classes (exigences R1 à R8)
+hide empty members
+skinparam classAttributeIconSize 0
+
+enum TypeAbonnement <<enumeration>> {
+  OCCASIONNEL
+  MENSUEL
+  ANNUEL
+}
+
+class Station {
+  - nom : String
+  - adresse : String
+  - latitude : Real
+  - longitude : Real
+  + bornesLibres() : Integer
+  + louer(usager : Usager, numeroBorne : Integer) : Location
+  + restituer(location : Location, numeroBorne : Integer)
+}
+
+class Borne {
+  - numero : Integer {unique dans la station}
+  + estLibre() : Boolean
+}
+
+class Velo {
+  - identifiant : String
+  - dateMiseEnService : Date
+  - kilometrage : Real
+}
+
+class Usager {
+  - identifiant : String
+  - nom : String
+  - email : String
+  + peutLouer() : Boolean
+  + aLocationEnCours() : Boolean
+}
+
+class Abonnement {
+  - type : TypeAbonnement
+  - dateDebut : Date
+  - dateFin : Date
+  + estValide(date : Date) : Boolean
+}
+
+class Location {
+  - debut : DateTime
+  - fin : DateTime [0..1]
+  - cout : Real [0..1]
+  + dureeMinutes() : Integer
+  + calculerCout() : Real
+}
+
+' R1 : une station possède 1 à 40 bornes, une borne n'existe pas sans sa station
+Station "1" *-- "bornes\n1..40" Borne
+
+' R2 : une borne accueille au plus un vélo
+Borne "0..1" --> "velo\n0..1" Velo
+
+' R4 : un usager peut détenir un abonnement
+Usager "1" --> "abonnement\n0..1" Abonnement
+Abonnement ..> TypeAbonnement
+
+' R5 : une location relie un usager et un vélo
+Usager "usager\n1" <--> "locations\n0..*" Location
+Location "0..*" --> "velo\n1" Velo
+
+' R5 : station de départ (connue) et d'arrivée (inconnue tant que le vélo n'est pas rendu)
+Location "0..*" --> "depart\n1" Station
+Location "0..*" --> "arrivee\n0..1" Station
+
+@enduml
