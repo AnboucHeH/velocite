@@ -1,0 +1,15 @@
+@startuml etats_velo
+title Machine a etats du velo
+
+[*] --> DISPONIBLE
+
+DISPONIBLE --> LOUE : deverrouiller(usager) [usager.peutLouer()]
+LOUE --> DISPONIBLE : restituer(borne) [borne.estLibre()] / garer(borne)
+DISPONIBLE --> EN_PANNE : signalerPanne()
+EN_PANNE --> EN_REPARATION : prendreEnCharge()
+EN_REPARATION --> DISPONIBLE : remettreEnService(borne) [borne.estLibre()] / garer(borne)
+EN_REPARATION --> REFORME : reformer()
+
+REFORME --> [*]
+
+@enduml

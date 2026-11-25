@@ -17,10 +17,6 @@ public class Usager {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-    private String telephone;
-    public String getTelephone() { return telephone; }
-    public void setTelephone(String telephone) { this.telephone = telephone; }
-
     private Abonnement abonnement;  // 0..1
     public Abonnement getAbonnement() { return abonnement; }
     public void setAbonnement(Abonnement abonnement) { this.abonnement = abonnement; }

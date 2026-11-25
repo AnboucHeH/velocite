@@ -10,7 +10,7 @@
                     {"name": "latitude", "type": "Real"},
                     {"name": "longitude", "type": "Real"}],
      "operations": [{"name": "bornesLibres", "params": [], "returns": "Integer"},
-                    {"name": "estPleine", "params": [], "returns": "Boolean"},                    {"name": "louer", "params": [{"name": "usager", "type": "Usager"}, {"name": "numeroBorne", "type": "Integer"}], "returns": "Location"},
+                    {"name": "louer", "params": [{"name": "usager", "type": "Usager"}, {"name": "numeroBorne", "type": "Integer"}], "returns": "Location"},
                     {"name": "restituer", "params": [{"name": "location", "type": "Location"}, {"name": "numeroBorne", "type": "Integer"}], "returns": null}]},
     {"name": "Borne",
      "attributes": [{"name": "numero", "type": "Integer"}],
@@ -23,8 +23,7 @@
     {"name": "Usager",
      "attributes": [{"name": "identifiant", "type": "String"},
                     {"name": "nom", "type": "String"},
-                    {"name": "email", "type": "String"},
-                    {"name": "telephone", "type": "String"}],
+                    {"name": "email", "type": "String"}],
      "operations": [{"name": "peutLouer", "params": [], "returns": "Boolean"},
                     {"name": "aLocationEnCours", "params": [], "returns": "Boolean"}]},
     {"name": "Abonnement",
@@ -48,5 +47,25 @@
     {"source": "Location", "target": "Velo", "role": "velo", "multiplicity": "1"},
     {"source": "Location", "target": "Station", "role": "depart", "multiplicity": "1"},
     {"source": "Location", "target": "Station", "role": "arrivee", "multiplicity": "0..1"}
+  ],
+  "stateMachines": [
+    {"context": "Velo", "enum": "EtatVelo", "initial": "DISPONIBLE",
+     "states": ["DISPONIBLE", "LOUE", "EN_PANNE", "EN_REPARATION", "REFORME"],
+     "events": [
+       {"name": "deverrouiller", "params": [{"name": "usager", "type": "Usager"}]},
+       {"name": "restituer", "params": [{"name": "borne", "type": "Borne"}]},
+       {"name": "signalerPanne", "params": []},
+       {"name": "prendreEnCharge", "params": []},
+       {"name": "remettreEnService", "params": [{"name": "borne", "type": "Borne"}]},
+       {"name": "reformer", "params": []}
+     ],
+     "transitions": [
+       {"from": "DISPONIBLE", "event": "deverrouiller", "guard": "peutEtreDeverrouille", "to": "LOUE"},
+       {"from": "LOUE", "event": "restituer", "guard": "borneLibre", "action": "garer", "to": "DISPONIBLE"},
+       {"from": "DISPONIBLE", "event": "signalerPanne", "to": "EN_PANNE"},
+              {"from": "EN_PANNE", "event": "prendreEnCharge", "to": "EN_REPARATION"},
+       {"from": "EN_REPARATION", "event": "remettreEnService", "guard": "borneLibre", "action": "garer", "to": "DISPONIBLE"},
+       {"from": "EN_REPARATION", "event": "reformer", "to": "REFORME"}
+     ]}
   ]
 }
