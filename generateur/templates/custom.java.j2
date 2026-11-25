@@ -1,0 +1,15 @@
+package {{ package }};
+
+import java.time.*;
+import java.util.*;
+
+/* Classe manuelle. Creee une seule fois par le generateur, puis modifiee par vous. */
+public class {{ name }} extends {{ name }}Base {
+{% for o in operations %}
+
+    @Override
+    public {{ o.returns }} {{ o.name }}({{ o.params_decl }}) {
+        throw new UnsupportedOperationException("TODO");
+    }
+{% endfor %}
+}

@@ -1,0 +1,57 @@
+package {{ package }};
+
+import java.time.*;
+import java.util.*;
+
+public {% if is_abstract %}abstract {% endif %}class {{ class_name }}{% if superclass %} extends {{ superclass }}{% endif %} {
+
+{# ----- Attributs ----- #}
+{% for a in attributes %}
+    private {{ a.type }} {{ a.name }};
+    public {{ a.type }} get{{ a.Name }}() { return {{ a.name }}; }
+{# TROU 1. Ecrire le setter de l'attribut.
+   Pour l'attribut nom de type String, le code attendu est :
+       public void setNom(String nom) { this.nom = nom; }
+   Inspirez-vous du getter juste au-dessus. #}
+    public void set{{ a.Name }}({{ a.type }} {{ a.name }}) { this.{{ a.name }} = {{ a.name }}; }
+
+{% endfor %}
+{# ----- Associations de multiplicite maximale 1 ----- #}
+{% for r in single_refs %}
+    private {{ r.target }} {{ r.role }};  // {{ r.multiplicity }}
+    public {{ r.target }} get{{ r.Role }}() { return {{ r.role }}; }
+    public void set{{ r.Role }}({{ r.target }} {{ r.role }}) { this.{{ r.role }} = {{ r.role }}; }
+
+{% endfor %}
+{# ----- Associations multivaluees ----- #}
+{% for r in many_refs %}
+{# TROU 2. Ecrire le champ et le getter d'une association multivaluee.
+   Pour le role bornes (Station vers Borne, 1..40), le code attendu est :
+       private final List<Borne> bornes = new ArrayList<>();  // 1..40
+       public List<Borne> getBornes() { return bornes; }
+   Pas de setter. Inspirez-vous du bloc des associations de multiplicite 1. #}
+    private final List<{{ r.target }}> {{ r.role }} = new ArrayList<>();  // {{ r.multiplicity }}
+    public List<{{ r.target }}> get{{ r.Role }}() { return {{ r.role }}; }
+
+{% endfor %}
+{% if sm %}
+{% include "statemachine.java.j2" %}
+{% endif %}
+{# ----- Operations ----- #}
+{% for o in operations %}
+{% if gap %}
+    public abstract {{ o.returns }} {{ o.name }}({{ o.params_decl }});
+{% else %}
+{# TROU 3. Ecrire la methode correspondant a l'operation.
+   Pour l'operation estLibre() : Boolean, le code attendu est :
+       public boolean estLibre() {
+           throw new UnsupportedOperationException("TODO");
+       }
+   Variables disponibles : o.returns, o.name, o.params_decl. #}
+    public {{ o.returns }} {{ o.name }}({{ o.params_decl }}) {
+        throw new UnsupportedOperationException("TODO");
+    }
+
+{% endif %}
+{% endfor %}
+}

@@ -1,0 +1,24 @@
+    // ----- Machine a etats -----
+    private {{ sm.enum }} etat = {{ sm.enum }}.{{ sm.initial }};
+    public {{ sm.enum }} getEtat() { return etat; }
+
+{% for ev in sm.events %}
+    public void {{ ev.name }}({{ ev.params_decl }}) {
+{% for t in ev.transitions %}
+        if (etat == {{ sm.enum }}.{{ t.from }}{% if t.guard %} && {{ t.guard }}({{ ev.params_call }}){% endif %}) {
+{% if t.action %}
+            {{ t.action }}({{ ev.params_call }});
+{% endif %}
+            etat = {{ sm.enum }}.{{ t.to }};
+            return;
+        }
+{% endfor %}
+        throw new IllegalStateException("{{ ev.name }} refuse dans l'etat " + etat);
+    }
+
+{% endfor %}
+    // Gardes et effets : a redefinir dans le code manuel.
+{% for h in sm.hooks %}
+    protected {{ h.returns }} {{ h.name }}({{ h.params_decl }}) { {% if h.returns == "boolean" %}return true; {% endif %}}
+{% endfor %}
+
