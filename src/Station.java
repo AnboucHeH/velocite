@@ -28,6 +28,10 @@ public class Station {
         throw new UnsupportedOperationException("TODO");
     }
 
+    public boolean estPleine() {
+        throw new UnsupportedOperationException("TODO");
+    }
+
     public Location louer(Usager usager, int numeroBorne) {
         throw new UnsupportedOperationException("TODO");
     }
